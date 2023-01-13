@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier {
+public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground: View>: ViewModifier {
 
     // MARK: - Presentaion
 
@@ -30,7 +30,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     var closeOnTapOutside: Bool
 
     /// Background color for outside area - default is `Color.clear`
-    var backgroundColor: Color
+    var background: JMBackground?
 
     /// If opaque taps do not pass through popup's background color. Always opaque if closeOnTapOutside is true
     var isOpaque: Bool
@@ -38,7 +38,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     /// Is called on any close action
     var dismissCallback: (DismissSource) -> ()
 
-    var params: Popup<Item, PopupContent>.PopupParameters
+    var params: Popup<Item, PopupContent, JMBackground>.PopupParameters
 
     var view: () -> PopupContent
 
@@ -77,7 +77,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
     init(isPresented: Binding<Bool> = .constant(false),
          item: Binding<Item?> = .constant(nil),
          isBoolMode: Bool,
-         params: Popup<Item, PopupContent>.PopupParameters,
+         params: Popup<Item, PopupContent, JMBackground>.PopupParameters,
          view: @escaping () -> PopupContent) {
         self._isPresented = isPresented
         self._item = item
@@ -86,7 +86,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
         self.params = params
         self.autohideIn = params.autohideIn
         self.closeOnTapOutside = params.closeOnTapOutside
-        self.backgroundColor = params.backgroundColor
+        self.background = params.background
         self.isOpaque = params.isOpaque
         self.dismissCallback = params.dismissCallback
 
@@ -125,8 +125,9 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             }
     }
 
-    func backgroundColorView() -> some View {
-        backgroundColor.opacity(opacity)
+    func backgroundView() -> some View {
+        background
+            .opacity(opacity)
             .applyIf(closeOnTapOutside) { view in
                 view.contentShape(Rectangle())
             }
@@ -136,13 +137,13 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
                 item = nil
             }
             .edgesIgnoringSafeArea(.all)
-            .animation(.linear(duration: 0.2), value: opacity)
+            .animation(.easeInOut, value: opacity)
     }
 
     func constructPopup() -> some View {
         Group {
             if showContent {
-                backgroundColorView()
+                backgroundView()
                     .modifier(
                         Popup(
                             isPresented: $isPresented,
@@ -162,7 +163,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View>: ViewModifier
             dismissSource = nil
             showSheet = true // show transparent fullscreen sheet
             showContent = true // immediately load popup body
-            performWithDelay(0.01) {
+            performWithDelay(0.3) {
                 shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
                 opacity = 1 // this will cause cross disolving animation for background color
                 setupAutohide()

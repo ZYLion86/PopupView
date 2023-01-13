@@ -16,11 +16,11 @@ public enum DismissSource {
     case autohide
 }
 
-public struct Popup<Item: Equatable, PopupContent: View>: ViewModifier {
+public struct Popup<Item: Equatable, PopupContent: View, JMBackground: View>: ViewModifier {
 
     init(isPresented: Binding<Bool> = .constant(false),
          item: Binding<Item?> = .constant(nil),
-         params: Popup<Item, PopupContent>.PopupParameters,
+         params: Popup<Item, PopupContent, JMBackground>.PopupParameters,
          view: @escaping () -> PopupContent,
          shouldShowContent: Bool = true,
          showContent: Bool = true,
@@ -86,7 +86,7 @@ public struct Popup<Item: Equatable, PopupContent: View>: ViewModifier {
         var closeOnTapOutside: Bool = false
 
         /// Background color for outside area
-        var backgroundColor: Color = .clear
+        var background: JMBackground?
 
         /// If true taps do not pass through popup's background and the popup is displayed on top of navbar. Always opaque if closeOnTapOutside is true
         var isOpaque: Bool = false
@@ -135,9 +135,9 @@ public struct Popup<Item: Equatable, PopupContent: View>: ViewModifier {
             return params
         }
 
-        public func backgroundColor(_ backgroundColor: Color) -> PopupParameters {
+        public func background(_ background: JMBackground) -> PopupParameters {
             var params = self
-            params.backgroundColor = backgroundColor
+            params.background = background
             return params
         }
 
