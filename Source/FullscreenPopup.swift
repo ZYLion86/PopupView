@@ -30,7 +30,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
     var closeOnTapOutside: Bool
 
     /// Background color for outside area - default is `Color.clear`
-    var background: JMBackground?
+    var jmBackgroundView: JMBackground?
 
     /// If opaque taps do not pass through popup's background color. Always opaque if closeOnTapOutside is true
     var isOpaque: Bool
@@ -86,7 +86,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
         self.params = params
         self.autohideIn = params.autohideIn
         self.closeOnTapOutside = params.closeOnTapOutside
-        self.background = params.background
+        self.jmBackgroundView = params.backgroundView
         self.isOpaque = params.isOpaque
         self.dismissCallback = params.dismissCallback
 
@@ -126,7 +126,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
     }
 
     func backgroundView() -> some View {
-        background
+        jmBackgroundView
             .opacity(opacity)
             .applyIf(closeOnTapOutside) { view in
                 view.contentShape(Rectangle())

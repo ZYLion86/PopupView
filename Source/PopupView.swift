@@ -86,7 +86,7 @@ public struct Popup<Item: Equatable, PopupContent: View, JMBackground: View>: Vi
         var closeOnTapOutside: Bool = false
 
         /// Background color for outside area
-        var background: JMBackground?
+        var backgroundView: JMBackground?
 
         /// If true taps do not pass through popup's background and the popup is displayed on top of navbar. Always opaque if closeOnTapOutside is true
         var isOpaque: Bool = false
@@ -137,7 +137,7 @@ public struct Popup<Item: Equatable, PopupContent: View, JMBackground: View>: Vi
 
         public func background(_ background: JMBackground) -> PopupParameters {
             var params = self
-            params.background = background
+            params.backgroundView = background
             return params
         }
 
