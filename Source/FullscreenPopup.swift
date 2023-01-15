@@ -112,6 +112,9 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
 
     public func main(content: Content) -> some View {
         content
+            .onDisappear {
+                dismissCallback(dismissSource ?? .binding)
+            }
             .applyIf(opaqueBackground) { body in
                 body.transparentNonAnimatingFullScreenCover(isPresented: $showSheet) {
                     constructPopup()
@@ -165,13 +168,15 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             showContent = true // immediately load popup body
             performWithDelay(0.01) {
                 shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
-                opacity = 1
+                performWithDelay(0.3) {
+                    opacity = 1.0
+                }
                 setupAutohide()
             }
         } else {
             dispatchWorkHolder.work?.cancel()
             shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
-            opacity = 0
+            opacity = 0.0
             // do the rest once the animation is finished (see onAnimationCompleted())
             performWithDelay(0.3) { // TEMP: imitate onAnimationCompleted for now
                 onAnimationCompleted()
@@ -187,7 +192,6 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
         performWithDelay(0.01) {
             showSheet = false
         }
-        dismissCallback(dismissSource ?? .binding)
     }
 
     func setupAutohide() {
