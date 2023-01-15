@@ -163,14 +163,19 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             dismissSource = nil
             showSheet = true // show transparent fullscreen sheet
             showContent = true // immediately load popup body
-            shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
-            opacity = 1
-            setupAutohide()
+            performWithDelay(0.01) {
+                shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
+                performWithDelay(0.35) { opacity = 1 }
+                setupAutohide()
+            }
         } else {
             dispatchWorkHolder.work?.cancel()
             shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
             opacity = 0
-            onAnimationCompleted()
+            // do the rest once the animation is finished (see onAnimationCompleted())
+            performWithDelay(0.35) { // TEMP: imitate onAnimationCompleted for now
+                onAnimationCompleted()
+            }
         }
     }
 
@@ -179,7 +184,9 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             return
         }
         showContent = false // unload popup body after hiding animation is done
-        showSheet = false
+        performWithDelay(0.01) {
+            showSheet = false
+        }
         dismissCallback(dismissSource ?? .binding)
     }
 
