@@ -112,9 +112,6 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
 
     public func main(content: Content) -> some View {
         content
-            .onDisappear {
-                dismissCallback(dismissSource ?? .binding)
-            }
             .applyIf(opaqueBackground) { body in
                 body.transparentNonAnimatingFullScreenCover(isPresented: $showSheet) {
                     constructPopup()
@@ -140,7 +137,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
                 item = nil
             }
             .edgesIgnoringSafeArea(.all)
-            .animation(.easeInOut, value: opacity)
+            .animation(.easeInOut(duration: 0.3), value: opacity)
     }
 
     func constructPopup() -> some View {
@@ -168,9 +165,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             showContent = true // immediately load popup body
             performWithDelay(0.01) {
                 shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
-                performWithDelay(0.3) {
-                    opacity = 1.0
-                }
+                performWithDelay(0.35) { opacity = 1.0 }
                 setupAutohide()
             }
         } else {
@@ -178,7 +173,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
             opacity = 0.0
             // do the rest once the animation is finished (see onAnimationCompleted())
-            performWithDelay(0.3) { // TEMP: imitate onAnimationCompleted for now
+            performWithDelay(0.35) { // TEMP: imitate onAnimationCompleted for now
                 onAnimationCompleted()
             }
         }
@@ -192,6 +187,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
         performWithDelay(0.01) {
             showSheet = false
         }
+        dismissCallback(dismissSource ?? .binding)
     }
 
     func setupAutohide() {
