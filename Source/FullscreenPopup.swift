@@ -137,7 +137,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
                 item = nil
             }
             .edgesIgnoringSafeArea(.all)
-            .animation(.easeInOut(duration: 0.3), value: opacity)
+            .animation(.easeInOut, value: opacity)
     }
 
     func constructPopup() -> some View {
@@ -163,16 +163,18 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             dismissSource = nil
             showSheet = true // show transparent fullscreen sheet
             showContent = true // immediately load popup body
-            performWithDelay(0.08) {
+            performWithDelay(0.05) {
                 shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
-                performWithDelay(0.35) { opacity = 1.0 }
+                performWithDelay(0.3) { opacity = 1.0 }
                 setupAutohide()
             }
         } else {
             dispatchWorkHolder.work?.cancel()
             shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
             opacity = 0.0
-            onAnimationCompleted()
+            performWithDelay(0.3) {
+                onAnimationCompleted()
+            }
         }
     }
 
