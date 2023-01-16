@@ -172,10 +172,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             dispatchWorkHolder.work?.cancel()
             shouldShowContent = false // this will cause currentOffset change thus triggering the sliding hiding animation
             opacity = 0.0
-            // do the rest once the animation is finished (see onAnimationCompleted())
-            performWithDelay(0.35) { // TEMP: imitate onAnimationCompleted for now
-                onAnimationCompleted()
-            }
+            onAnimationCompleted()
         }
     }
 
