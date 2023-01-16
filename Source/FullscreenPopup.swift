@@ -163,7 +163,7 @@ public struct FullscreenPopup<Item: Equatable, PopupContent: View, JMBackground:
             dismissSource = nil
             showSheet = true // show transparent fullscreen sheet
             showContent = true // immediately load popup body
-            performWithDelay(0.01) {
+            performWithDelay(0.08) {
                 shouldShowContent = true // this will cause currentOffset change thus triggering the sliding showing animation
                 performWithDelay(0.35) { opacity = 1.0 }
                 setupAutohide()
